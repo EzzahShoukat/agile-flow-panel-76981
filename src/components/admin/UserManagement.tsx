@@ -122,24 +122,29 @@ export const UserManagement = () => {
                         {user.full_name.slice(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    {editingUserId === user.id ? (
-                      <div className="flex gap-2">
-                        <Input
-                          value={editingName}
-                          onChange={(e) => setEditingName(e.target.value)}
-                          className="h-8"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") handleSaveName(user.id);
-                            if (e.key === "Escape") setEditingUserId(null);
-                          }}
-                        />
-                        <Button size="sm" onClick={() => handleSaveName(user.id)}>
-                          Save
-                        </Button>
-                      </div>
-                    ) : (
-                      <span className="font-medium">{user.full_name}</span>
-                    )}
+                    <div className="flex flex-col">
+                      {editingUserId === user.id ? (
+                        <div className="flex gap-2">
+                          <Input
+                            value={editingName}
+                            onChange={(e) => setEditingName(e.target.value)}
+                            className="h-8"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") handleSaveName(user.id);
+                              if (e.key === "Escape") setEditingUserId(null);
+                            }}
+                          />
+                          <Button size="sm" onClick={() => handleSaveName(user.id)}>
+                            Save
+                          </Button>
+                        </div>
+                      ) : (
+                        <span className="font-medium">{user.full_name}</span>
+                      )}
+                      <Badge variant="outline" className={`${roleColors[user.role]} mt-1 w-fit text-xs`}>
+                        {roleLabels[user.role]}
+                      </Badge>
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell className="text-muted-foreground">{user.email}</TableCell>

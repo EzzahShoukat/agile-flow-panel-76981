@@ -1,5 +1,5 @@
-import { Shield, Users, User as UserIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Shield, Users, ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -8,24 +8,36 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export const Profile = () => {
   const { user, userRole } = useAuth();
+  const navigate = useNavigate();
 
   const roleColors = {
     admin: "bg-red-500/10 text-red-500 border-red-500/20",
     manager: "bg-blue-500/10 text-blue-500 border-blue-500/20",
     employee: "bg-green-500/10 text-green-500 border-green-500/20",
+    team_lead: "bg-purple-500/10 text-purple-500 border-purple-500/20",
   };
 
   const roleLabels = {
     admin: "Admin",
     manager: "Manager",
     employee: "Employee",
+    team_lead: "Team Lead",
   };
 
   return (
     <div className="p-8 space-y-6 max-w-4xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Profile</h1>
-        <p className="text-muted-foreground mt-1">Manage your account settings</p>
+      <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Profile</h1>
+          <p className="text-muted-foreground mt-1">Manage your account settings</p>
+        </div>
       </div>
 
       <Card>

@@ -1,12 +1,14 @@
-import { Shield } from "lucide-react";
+import { Shield, ArrowLeft } from "lucide-react";
 import { UserManagement } from "@/components/admin/UserManagement";
 import { useAuth } from "@/contexts/AuthContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { MainSidebar } from "@/components/layout/MainSidebar";
+import { Button } from "@/components/ui/button";
 
 export const AdminPanel = () => {
   const { userRole } = useAuth();
+  const navigate = useNavigate();
 
   // Only admins can access this page
   if (userRole !== "admin") {
@@ -20,7 +22,14 @@ export const AdminPanel = () => {
         <MainSidebar />
         <main className="flex-1 overflow-auto">
           <div className="p-8 space-y-8">
-            <div className="flex items-center gap-3 mb-8">
+            <div className="flex items-center gap-4 mb-8">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/")}
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
               <Shield className="h-8 w-8 text-primary" />
               <div>
                 <h1 className="text-3xl font-bold text-foreground">Admin Panel</h1>

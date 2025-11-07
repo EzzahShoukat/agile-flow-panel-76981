@@ -42,91 +42,53 @@ export const Dashboard = () => {
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-8 space-y-8 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
-        <p className="text-muted-foreground">Track your projects and tasks</p>
+        <h1 className="text-4xl font-bold text-foreground mb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          Dashboard
+        </h1>
+        <p className="text-muted-foreground text-lg">Welcome back! Here's your overview</p>
       </div>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-card border border-border rounded-lg p-6">
+        <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-muted-foreground">Total Tasks</h3>
-            <BarChart3 className="h-5 w-5 text-primary" />
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <BarChart3 className="h-5 w-5 text-primary" />
+            </div>
           </div>
-          <p className="text-3xl font-bold">{totalTasks}</p>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-4xl font-bold text-foreground">{totalTasks}</p>
+          <p className="text-sm text-muted-foreground mt-2">
             {inProgressTasks} in progress
           </p>
         </div>
 
-        <div className="bg-card border border-border rounded-lg p-6">
+        <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-xl p-6 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-muted-foreground">Completed</h3>
-            <TrendingUp className="h-5 w-5 text-status-done" />
+            <div className="p-2 bg-green-500/10 rounded-lg">
+              <TrendingUp className="h-5 w-5 text-green-600" />
+            </div>
           </div>
-          <p className="text-3xl font-bold">{completedTasks}</p>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-4xl font-bold text-foreground">{completedTasks}</p>
+          <p className="text-sm text-muted-foreground mt-2">
             {completionRate}% completion rate
           </p>
         </div>
 
-        <div className="bg-card border border-border rounded-lg p-6">
+        <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 rounded-xl p-6 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-muted-foreground">Active Projects</h3>
-            <BarChart3 className="h-5 w-5 text-accent" />
+            <div className="p-2 bg-blue-500/10 rounded-lg">
+              <BarChart3 className="h-5 w-5 text-blue-600" />
+            </div>
           </div>
-          <p className="text-3xl font-bold">{projects.length}</p>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-4xl font-bold text-foreground">{projects.length}</p>
+          <p className="text-sm text-muted-foreground mt-2">
             All projects active
           </p>
-        </div>
-      </div>
-
-      {/* Quick Navigation */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Button
-          variant="outline"
-          className="h-24 flex items-center justify-start gap-4 text-left"
-          onClick={() => navigate("/projects")}
-        >
-          <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <FolderKanban className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h3 className="font-semibold">Projects</h3>
-            <p className="text-sm text-muted-foreground">{projects.length} active projects</p>
-          </div>
-        </Button>
-        
-        <Button
-          variant="outline"
-          className="h-24 flex items-center justify-start gap-4 text-left"
-          onClick={() => navigate("/teams")}
-        >
-          <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <Users className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h3 className="font-semibold">Teams</h3>
-            <p className="text-sm text-muted-foreground">View teams</p>
-          </div>
-        </Button>
-      </div>
-
-      {/* Recent Projects */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-foreground">Recent Projects</h2>
-          <Button variant="ghost" onClick={() => navigate("/projects")}>View All</Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.slice(0, 3).map((project) => (
-            <div key={project.id} onClick={() => navigate(`/project/${project.id}`)} className="cursor-pointer">
-              <ProjectCard project={project} />
-            </div>
-          ))}
         </div>
       </div>
     </div>
