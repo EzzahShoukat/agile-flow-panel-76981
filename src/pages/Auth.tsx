@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { Loader2, CheckCircle2, Users, Zap } from "lucide-react";
+import { Loader2, CheckCircle2, Users, Zap, ArrowRight } from "lucide-react";
+import heroImage from "@/assets/hero-dashboard.jpg";
 
 export default function Auth() {
   const { signIn, signUp, resetPassword } = useAuth();
@@ -125,59 +126,78 @@ export default function Auth() {
   if (!showAuthForms) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
-        <div className="w-full max-w-5xl">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left side - Hero content */}
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                  TaskFlow
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <div className="inline-block">
+                  <span className="text-sm font-semibold tracking-wide uppercase text-primary/80 bg-primary/10 px-4 py-2 rounded-full">
+                    Project Management Simplified
+                  </span>
+                </div>
+                <h1 className="text-6xl lg:text-7xl font-bold leading-tight">
+                  <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                    QuickPace
+                  </span>
                 </h1>
-                <p className="text-xl text-muted-foreground">
-                  Streamline your workflow, boost productivity, and collaborate seamlessly with your team.
+                <p className="text-xl lg:text-2xl text-foreground/80 leading-relaxed">
+                  Transform the way your team collaborates. Streamline workflows, track progress in real-time, and deliver projects faster than ever before.
                 </p>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
+              <div className="space-y-5">
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
                   <CheckCircle2 className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-foreground">Organize Tasks Effortlessly</h3>
-                    <p className="text-sm text-muted-foreground">Keep track of all your tasks in one intuitive dashboard</p>
+                    <h3 className="font-semibold text-foreground text-lg">Intuitive Task Management</h3>
+                    <p className="text-muted-foreground">Organize, prioritize, and track tasks with drag-and-drop simplicity across customizable boards</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
                   <Users className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-foreground">Team Collaboration</h3>
-                    <p className="text-sm text-muted-foreground">Work together seamlessly with real-time updates</p>
+                    <h3 className="font-semibold text-foreground text-lg">Seamless Team Collaboration</h3>
+                    <p className="text-muted-foreground">Connect your team with role-based access, real-time updates, and transparent communication</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
                   <Zap className="h-6 w-6 text-secondary mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-foreground">Increase Productivity</h3>
-                    <p className="text-sm text-muted-foreground">Smart features to help you get more done</p>
+                    <h3 className="font-semibold text-foreground text-lg">Built for Speed</h3>
+                    <p className="text-muted-foreground">Lightning-fast interface designed to keep your team moving without friction or delays</p>
                   </div>
                 </div>
               </div>
 
-              <Button 
-                size="lg" 
-                className="w-full lg:w-auto text-lg px-8"
-                onClick={() => setShowAuthForms(true)}
-              >
-                Get Started
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Button 
+                  size="lg" 
+                  className="text-lg px-8 py-6 group"
+                  onClick={() => setShowAuthForms(true)}
+                >
+                  Get Started Free
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="text-lg px-8 py-6"
+                  onClick={() => setShowAuthForms(true)}
+                >
+                  Sign In
+                </Button>
+              </div>
             </div>
 
-            {/* Right side - Image placeholder */}
+            {/* Right side - Hero Image */}
             <div className="hidden lg:block">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 aspect-square flex items-center justify-center">
-                <div className="text-center space-y-4 p-8">
-                  <div className="text-8xl">📊</div>
-                  <p className="text-2xl font-semibold text-foreground">Your Productivity Hub</p>
-                </div>
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50">
+                <img 
+                  src={heroImage} 
+                  alt="QuickPace Dashboard - Modern project management interface" 
+                  className="w-full h-auto object-cover"
+                />
               </div>
             </div>
           </div>
@@ -192,7 +212,7 @@ export default function Auth() {
         <CardHeader className="space-y-3 text-center">
           <div className="flex items-center justify-center gap-2">
             <CardTitle className="text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              TaskFlow
+              QuickPace
             </CardTitle>
           </div>
           <CardDescription className="text-base">Welcome! Let's get you organized</CardDescription>
