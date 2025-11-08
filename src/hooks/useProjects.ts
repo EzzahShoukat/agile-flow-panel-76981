@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 export interface Project {
   id: string;
@@ -28,6 +29,29 @@ export const useProjects = () => {
       return data as Project[];
     },
   });
+
+  // Set up realtime subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel("projects-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "projects",
+        },
+        () => {
+          // Invalidate all project-related queries
+          queryClient.invalidateQueries({ queryKey: ["projects"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const createProject = useMutation({
     mutationFn: async (project: Partial<Project>) => {
