@@ -4,7 +4,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { isPast, subDays, format, differenceInDays } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+
+const COLORS = {
+  primary: '#3b82f6',
+  done: '#10b981',
+  inProgress: '#f59e0b',
+  destructive: '#ef4444',
+  muted: '#9ca3af',
+  chart2: '#8b5cf6'
+};
 
 export const Dashboard = () => {
   const { projects, isLoading: projectsLoading } = useProjects();
@@ -52,7 +60,7 @@ export const Dashboard = () => {
     const completed = projectTasks.filter(t => t.status === "done").length;
     const total = projectTasks.length;
     return {
-      name: project.name,
+      name: project.name.length > 15 ? project.name.substring(0, 15) + '...' : project.name,
       completion: total > 0 ? Math.round((completed / total) * 100) : 0,
       total,
       completed
@@ -63,8 +71,8 @@ export const Dashboard = () => {
   const completedTasks = tasks.filter(t => t.status === "done").length;
   const pendingTasks = tasks.filter(t => t.status !== "done").length;
   const completionComparisonData = [
-    { name: "Completed", value: completedTasks, fill: "hsl(var(--status-done))" },
-    { name: "Pending", value: pendingTasks, fill: "hsl(var(--status-in-progress))" }
+    { name: "Completed", value: completedTasks },
+    { name: "Pending", value: pendingTasks }
   ];
 
   // 3. Overdue Tasks Trend (last 7 days)
@@ -74,7 +82,6 @@ export const Dashboard = () => {
       t.due_date && 
       isPast(new Date(t.due_date)) && 
       t.status !== "done" &&
-      isPast(new Date(t.due_date)) &&
       new Date(t.due_date) <= date
     ).length;
     return {
@@ -84,10 +91,23 @@ export const Dashboard = () => {
   });
 
   // 4. Task Aging Analysis
+  const todoTasks = tasks.filter(t => t.status === "todo");
+  const inProgressTasks = tasks.filter(t => t.status === "in_progress");
+  const reviewTasks = tasks.filter(t => t.status === "review");
+
   const agingData = [
-    { status: "To Do", avg: Math.round(tasks.filter(t => t.status === "todo").reduce((acc, t) => acc + differenceInDays(new Date(), new Date(t.created_at)), 0) / (tasks.filter(t => t.status === "todo").length || 1)) },
-    { status: "In Progress", avg: Math.round(tasks.filter(t => t.status === "in_progress").reduce((acc, t) => acc + differenceInDays(new Date(), new Date(t.created_at)), 0) / (tasks.filter(t => t.status === "in_progress").length || 1)) },
-    { status: "Review", avg: Math.round(tasks.filter(t => t.status === "review").reduce((acc, t) => acc + differenceInDays(new Date(), new Date(t.created_at)), 0) / (tasks.filter(t => t.status === "review").length || 1)) },
+    { 
+      status: "To Do", 
+      avg: todoTasks.length > 0 ? Math.round(todoTasks.reduce((acc, t) => acc + differenceInDays(new Date(), new Date(t.created_at)), 0) / todoTasks.length) : 0
+    },
+    { 
+      status: "In Progress", 
+      avg: inProgressTasks.length > 0 ? Math.round(inProgressTasks.reduce((acc, t) => acc + differenceInDays(new Date(), new Date(t.created_at)), 0) / inProgressTasks.length) : 0
+    },
+    { 
+      status: "Review", 
+      avg: reviewTasks.length > 0 ? Math.round(reviewTasks.reduce((acc, t) => acc + differenceInDays(new Date(), new Date(t.created_at)), 0) / reviewTasks.length) : 0
+    },
   ];
 
   // 5. Tasks Completed per Member
@@ -95,7 +115,7 @@ export const Dashboard = () => {
     const memberTasks = tasks.filter(t => t.assignee_id === member.id);
     const completed = memberTasks.filter(t => t.status === "done").length;
     return {
-      name: member.full_name,
+      name: member.full_name?.substring(0, 12) || 'Unknown',
       completed
     };
   }).filter(m => m.completed > 0).sort((a, b) => b.completed - a.completed).slice(0, 10);
@@ -110,11 +130,11 @@ export const Dashboard = () => {
   const assignmentLoadData = teamMembers.map(member => {
     const memberTasks = tasks.filter(t => t.assignee_id === member.id);
     return {
-      name: member.full_name,
+      name: member.full_name?.substring(0, 10) || 'Unknown',
       inProgress: memberTasks.filter(t => t.status === "in_progress").length,
       completed: memberTasks.filter(t => t.status === "done").length,
     };
-  }).filter(m => m.inProgress > 0 || m.completed > 0).slice(0, 10);
+  }).filter(m => m.inProgress > 0 || m.completed > 0).slice(0, 8);
 
   // 8. Active vs Idle Members
   const activeMembersCount = teamMembers.filter(member => 
@@ -122,17 +142,9 @@ export const Dashboard = () => {
   ).length;
   const idleMembersCount = teamMembers.length - activeMembersCount;
   const engagementData = [
-    { name: "Active", value: activeMembersCount, fill: "hsl(var(--primary))" },
-    { name: "Idle", value: idleMembersCount, fill: "hsl(var(--muted))" }
+    { name: "Active", value: activeMembersCount },
+    { name: "Idle", value: idleMembersCount }
   ];
-
-  const chartConfig = {
-    completion: { label: "Completion %", color: "hsl(var(--primary))" },
-    overdue: { label: "Overdue", color: "hsl(var(--destructive))" },
-    completed: { label: "Completed", color: "hsl(var(--status-done))" },
-    inProgress: { label: "In Progress", color: "hsl(var(--status-in-progress))" },
-    avg: { label: "Avg Days", color: "hsl(var(--chart-2))" },
-  };
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
@@ -151,66 +163,66 @@ export const Dashboard = () => {
           {/* Project Completion % */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">Project Completion %</h3>
-            <ChartContainer config={chartConfig} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={projectCompletionData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="name" className="text-xs" />
-                  <YAxis className="text-xs" />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="completion" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={projectCompletionData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="name" style={{ fontSize: '12px' }} />
+                <YAxis style={{ fontSize: '12px' }} />
+                <Tooltip />
+                <Bar dataKey="completion" fill={COLORS.primary} radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </Card>
 
           {/* Tasks Completed vs Pending */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">Tasks Completed vs Pending</h3>
-            <ChartContainer config={chartConfig} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={completionComparisonData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
-                    {completionComparisonData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie 
+                  data={completionComparisonData} 
+                  dataKey="value" 
+                  nameKey="name" 
+                  cx="50%" 
+                  cy="50%" 
+                  outerRadius={100} 
+                  label
+                >
+                  <Cell fill={COLORS.done} />
+                  <Cell fill={COLORS.inProgress} />
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
           </Card>
 
           {/* Overdue Tasks Trend */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">Overdue Tasks Trend (Last 7 Days)</h3>
-            <ChartContainer config={chartConfig} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={overdueTrendData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="date" className="text-xs" />
-                  <YAxis className="text-xs" />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line type="monotone" dataKey="overdue" stroke="hsl(var(--destructive))" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={overdueTrendData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="date" style={{ fontSize: '12px' }} />
+                <YAxis style={{ fontSize: '12px' }} />
+                <Tooltip />
+                <Line type="monotone" dataKey="overdue" stroke={COLORS.destructive} strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
           </Card>
 
           {/* Task Aging Analysis */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">Task Aging Analysis (Avg Days)</h3>
-            <ChartContainer config={chartConfig} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={agingData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis type="number" className="text-xs" />
-                  <YAxis dataKey="status" type="category" className="text-xs" />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="avg" fill="hsl(var(--chart-2))" radius={[0, 8, 8, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={agingData} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis type="number" style={{ fontSize: '12px' }} />
+                <YAxis dataKey="status" type="category" style={{ fontSize: '12px' }} width={100} />
+                <Tooltip />
+                <Bar dataKey="avg" fill={COLORS.chart2} radius={[0, 8, 8, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </Card>
         </div>
       </div>
@@ -223,17 +235,15 @@ export const Dashboard = () => {
           {/* Tasks Completed per Member */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">Tasks Completed per Member</h3>
-            <ChartContainer config={chartConfig} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={memberCompletionData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis type="number" className="text-xs" />
-                  <YAxis dataKey="name" type="category" className="text-xs" width={100} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="completed" fill="hsl(var(--status-done))" radius={[0, 8, 8, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={memberCompletionData} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis type="number" style={{ fontSize: '12px' }} />
+                <YAxis dataKey="name" type="category" style={{ fontSize: '12px' }} width={100} />
+                <Tooltip />
+                <Bar dataKey="completed" fill={COLORS.done} radius={[0, 8, 8, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </Card>
 
           {/* Average Task Completion Time */}
@@ -250,37 +260,40 @@ export const Dashboard = () => {
           {/* Task Assignment Load */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">Task Assignment Load</h3>
-            <ChartContainer config={chartConfig} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={assignmentLoadData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="name" className="text-xs" angle={-45} textAnchor="end" height={80} />
-                  <YAxis className="text-xs" />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Legend />
-                  <Bar dataKey="inProgress" fill="hsl(var(--status-in-progress))" stackId="a" />
-                  <Bar dataKey="completed" fill="hsl(var(--status-done))" stackId="a" />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={assignmentLoadData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="name" style={{ fontSize: '10px' }} angle={-45} textAnchor="end" height={80} />
+                <YAxis style={{ fontSize: '12px' }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="inProgress" fill={COLORS.inProgress} stackId="a" name="In Progress" />
+                <Bar dataKey="completed" fill={COLORS.done} stackId="a" name="Completed" />
+              </BarChart>
+            </ResponsiveContainer>
           </Card>
 
           {/* Active vs Idle Members */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">Active vs Idle Members</h3>
-            <ChartContainer config={chartConfig} className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={engagementData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
-                    {engagementData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie 
+                  data={engagementData} 
+                  dataKey="value" 
+                  nameKey="name" 
+                  cx="50%" 
+                  cy="50%" 
+                  outerRadius={100} 
+                  label
+                >
+                  <Cell fill={COLORS.primary} />
+                  <Cell fill={COLORS.muted} />
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
           </Card>
         </div>
       </div>
