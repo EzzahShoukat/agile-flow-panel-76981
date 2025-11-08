@@ -6,12 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2, Users, Zap } from "lucide-react";
 
 export default function Auth() {
   const { signIn, signUp, resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showReset, setShowReset] = useState(false);
+  const [showAuthForms, setShowAuthForms] = useState(false);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -121,16 +122,78 @@ export default function Auth() {
     );
   }
 
+  if (!showAuthForms) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
+        <div className="w-full max-w-5xl">
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            {/* Left side - Hero content */}
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                  TaskFlow
+                </h1>
+                <p className="text-xl text-muted-foreground">
+                  Streamline your workflow, boost productivity, and collaborate seamlessly with your team.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-semibold text-foreground">Organize Tasks Effortlessly</h3>
+                    <p className="text-sm text-muted-foreground">Keep track of all your tasks in one intuitive dashboard</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Users className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-semibold text-foreground">Team Collaboration</h3>
+                    <p className="text-sm text-muted-foreground">Work together seamlessly with real-time updates</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Zap className="h-6 w-6 text-secondary mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-semibold text-foreground">Increase Productivity</h3>
+                    <p className="text-sm text-muted-foreground">Smart features to help you get more done</p>
+                  </div>
+                </div>
+              </div>
+
+              <Button 
+                size="lg" 
+                className="w-full lg:w-auto text-lg px-8"
+                onClick={() => setShowAuthForms(true)}
+              >
+                Get Started
+              </Button>
+            </div>
+
+            {/* Right side - Image placeholder */}
+            <div className="hidden lg:block">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 aspect-square flex items-center justify-center">
+                <div className="text-center space-y-4 p-8">
+                  <div className="text-8xl">📊</div>
+                  <p className="text-2xl font-semibold text-foreground">Your Productivity Hub</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-3 text-center">
           <div className="flex items-center justify-center gap-2">
-            <div className="text-4xl">✨</div>
-            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
               TaskFlow
             </CardTitle>
-            <div className="text-4xl">🚀</div>
           </div>
           <CardDescription className="text-base">Welcome! Let's get you organized</CardDescription>
         </CardHeader>
@@ -229,6 +292,14 @@ export default function Auth() {
               </form>
             </TabsContent>
           </Tabs>
+          
+          <Button 
+            variant="ghost" 
+            className="w-full mt-4"
+            onClick={() => setShowAuthForms(false)}
+          >
+            Back to Home
+          </Button>
         </CardContent>
       </Card>
     </div>

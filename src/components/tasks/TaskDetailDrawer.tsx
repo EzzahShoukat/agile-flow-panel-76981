@@ -117,26 +117,28 @@ export const TaskDetailDrawer = ({ task, open, onOpenChange }: TaskDetailDrawerP
               </Select>
             </div>
 
-            <div className="flex-1">
-              <label className="text-xs font-medium text-muted-foreground mb-2 block">
-                Priority
-              </label>
-              <Select defaultValue={task.priority} onValueChange={handlePriorityChange}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(priorityConfig).map(([value, config]) => (
-                    <SelectItem key={value} value={value}>
-                      <div className="flex items-center gap-2">
-                        <Flag className={cn("h-3 w-3", config.color)} />
-                        {config.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {task.status !== "done" && (
+              <div className="flex-1">
+                <label className="text-xs font-medium text-muted-foreground mb-2 block">
+                  Priority
+                </label>
+                <Select defaultValue={task.priority} onValueChange={handlePriorityChange}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(priorityConfig).map(([value, config]) => (
+                      <SelectItem key={value} value={value}>
+                        <div className="flex items-center gap-2">
+                          <Flag className={cn("h-3 w-3", config.color)} />
+                          {config.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
 
           {/* Description */}

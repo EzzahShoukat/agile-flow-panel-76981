@@ -78,7 +78,7 @@ export const GlobalSearch = ({ open, onOpenChange }: GlobalSearchProps) => {
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
 
-        {filteredProjects.length > 0 && (
+        {searchQuery.length > 0 && filteredProjects.length > 0 && (
           <CommandGroup heading="Projects">
             {filteredProjects.slice(0, 5).map((project) => (
               <CommandItem
@@ -92,7 +92,7 @@ export const GlobalSearch = ({ open, onOpenChange }: GlobalSearchProps) => {
           </CommandGroup>
         )}
 
-        {filteredTasks.length > 0 && (
+        {searchQuery.length > 0 && filteredTasks.length > 0 && (
           <CommandGroup heading="Tasks">
             {filteredTasks.slice(0, 5).map((task) => (
               <CommandItem
@@ -106,7 +106,7 @@ export const GlobalSearch = ({ open, onOpenChange }: GlobalSearchProps) => {
           </CommandGroup>
         )}
 
-        {filteredUsers.length > 0 && (
+        {searchQuery.length > 0 && filteredUsers.length > 0 && (
           <CommandGroup heading="People">
             {filteredUsers.slice(0, 5).map((user) => (
               <CommandItem
