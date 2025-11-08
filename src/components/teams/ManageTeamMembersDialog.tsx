@@ -78,13 +78,13 @@ export const ManageTeamMembersDialog = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={member.profiles.avatar_url || undefined} />
+                      <AvatarImage src={member.profiles?.avatar_url || undefined} />
                       <AvatarFallback>
-                        {member.profiles.full_name.slice(0, 2).toUpperCase()}
+                        {member.profiles?.full_name?.slice(0, 2).toUpperCase() || "U"}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-medium">{member.profiles.full_name}</p>
+                      <p className="font-medium">{member.profiles?.full_name || "Unknown User"}</p>
                       <p className="text-sm text-muted-foreground">
                         Added {new Date(member.added_at).toLocaleDateString()}
                       </p>
