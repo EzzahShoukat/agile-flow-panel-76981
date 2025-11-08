@@ -32,27 +32,8 @@ export const Dashboard = () => {
     },
   });
 
-  // Set up realtime subscription for dashboard stats
-  useEffect(() => {
-    const channel = supabase
-      .channel("dashboard-tasks-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "tasks",
-        },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["recent-tasks"] });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
+  // Real-time subscription is now handled in useTasks hook
+  // which invalidates both ["tasks"] and ["recent-tasks"] queries
 
   if (projectsLoading || tasksLoading) {
     return (

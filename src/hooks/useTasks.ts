@@ -62,7 +62,9 @@ export const useTasks = (projectId?: string) => {
           table: "tasks",
         },
         () => {
+          // Invalidate all task-related queries
           queryClient.invalidateQueries({ queryKey: ["tasks"] });
+          queryClient.invalidateQueries({ queryKey: ["recent-tasks"] });
         }
       )
       .subscribe();
