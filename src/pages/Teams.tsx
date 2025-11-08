@@ -112,7 +112,7 @@ export const Teams = () => {
                   )}
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <TeamMembersPreview teamId={team.id} />
+                  <TeamMembersPreview teamId={team.id} canManageTeams={canManageTeams} />
                   {canManageTeams && (
                     <Button
                       variant="outline"
@@ -171,7 +171,7 @@ export const Teams = () => {
   );
 };
 
-const TeamMembersPreview = ({ teamId }: { teamId: string }) => {
+const TeamMembersPreview = ({ teamId, canManageTeams }: { teamId: string; canManageTeams: boolean }) => {
   const { members, isLoading } = useTeamMembers(teamId);
 
   if (isLoading) {
@@ -186,18 +186,37 @@ const TeamMembersPreview = ({ teamId }: { teamId: string }) => {
       </div>
       
       {members.length > 0 && (
-        <div className="flex -space-x-2">
-          {members.slice(0, 5).map((member) => (
-            <Avatar key={member.id} className="border-2 border-background h-8 w-8">
-              <AvatarImage src={member.profiles?.avatar_url || undefined} />
-              <AvatarFallback className="text-xs">
-                {member.profiles?.full_name?.charAt(0) || "U"}
-              </AvatarFallback>
-            </Avatar>
-          ))}
-          {members.length > 5 && (
-            <div className="flex items-center justify-center h-8 w-8 rounded-full bg-muted border-2 border-background text-xs font-medium">
-              +{members.length - 5}
+        <div className="space-y-2">
+          <div className="flex -space-x-2">
+            {members.slice(0, 5).map((member) => (
+              <Avatar key={member.id} className="border-2 border-background h-8 w-8">
+                <AvatarImage src={member.profiles?.avatar_url || undefined} />
+                <AvatarFallback className="text-xs">
+                  {member.profiles?.full_name?.charAt(0) || "U"}
+                </AvatarFallback>
+              </Avatar>
+            ))}
+            {members.length > 5 && (
+              <div className="flex items-center justify-center h-8 w-8 rounded-full bg-muted border-2 border-background text-xs font-medium">
+                +{members.length - 5}
+              </div>
+            )}
+          </div>
+          
+          {/* Show all member names for non-managers/admins */}
+          {!canManageTeams && (
+            <div className="pt-2 space-y-1">
+              {members.map((member) => (
+                <div key={member.id} className="flex items-center gap-2 text-sm">
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={member.profiles?.avatar_url || undefined} />
+                    <AvatarFallback className="text-xs">
+                      {member.profiles?.full_name?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-foreground">{member.profiles?.full_name || "Unknown"}</span>
+                </div>
+              ))}
             </div>
           )}
         </div>

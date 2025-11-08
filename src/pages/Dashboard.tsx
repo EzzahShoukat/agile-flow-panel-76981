@@ -3,14 +3,16 @@ import { useProjects } from "@/hooks/useProjects";
 import { useNavigate } from "react-router-dom";
 import { BarChart3, TrendingUp, FolderKanban, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { projects, isLoading: projectsLoading } = useProjects();
   
-  // Only fetch recent tasks for dashboard overview
+  // Only fetch recent tasks for dashboard overview with realtime updates
   const { data: recentTasks = [], isLoading: tasksLoading } = useQuery({
     queryKey: ["recent-tasks"],
     queryFn: async () => {
@@ -27,6 +29,28 @@ export const Dashboard = () => {
       return data as any[];
     },
   });
+
+  // Set up realtime subscription for dashboard stats
+  useEffect(() => {
+    const channel = supabase
+      .channel("dashboard-tasks-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "tasks",
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["recent-tasks"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   if (projectsLoading || tasksLoading) {
     return (

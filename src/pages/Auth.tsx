@@ -158,7 +158,7 @@ export default function Auth() {
         </nav>
 
         {/* Main Content - Left Aligned */}
-        <div className="relative z-10 px-8 lg:px-16 py-12 max-w-3xl min-h-[calc(100vh-200px)] flex flex-col justify-between">
+        <div className="relative z-10 px-12 lg:px-24 py-12 max-w-3xl min-h-[calc(100vh-200px)] flex flex-col justify-between">
           <div className="space-y-8">
             <div className="space-y-6">
               <div className="inline-block">
