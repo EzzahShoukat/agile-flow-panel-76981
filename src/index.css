@@ -133,6 +133,19 @@ All colors MUST be HSL.
     --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.3);
     --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.4);
   }
+
+  @keyframes gradient-shift {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  .animate-gradient-shift {
+    animation: gradient-shift 8s ease-in-out infinite;
+  }
 }
 
 @layer base {

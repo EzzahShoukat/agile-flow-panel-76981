@@ -125,82 +125,93 @@ export default function Auth() {
 
   if (!showAuthForms) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left side - Hero content */}
-            <div className="space-y-8">
-              <div className="space-y-6">
-                <div className="inline-block">
-                  <span className="text-sm font-semibold tracking-wide uppercase text-primary/80 bg-primary/10 px-4 py-2 rounded-full">
-                    Project Management Simplified
-                  </span>
-                </div>
-                <h1 className="text-6xl lg:text-7xl font-bold leading-tight">
-                  <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                    QuickPace
-                  </span>
-                </h1>
-                <p className="text-xl lg:text-2xl text-foreground/80 leading-relaxed">
-                  Transform the way your team collaborates. Streamline workflows, track progress in real-time, and deliver projects faster than ever before.
-                </p>
-              </div>
+      <div className="min-h-screen relative overflow-hidden">
+        {/* Background with image and pastel gradient overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={heroImage} 
+            alt="QuickPace workspace background" 
+            className="w-full h-full object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 animate-gradient-shift"></div>
+        </div>
 
-              <div className="space-y-5">
-                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
-                  <CheckCircle2 className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-semibold text-foreground text-lg">Intuitive Task Management</h3>
-                    <p className="text-muted-foreground">Organize, prioritize, and track tasks with drag-and-drop simplicity across customizable boards</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
-                  <Users className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-semibold text-foreground text-lg">Seamless Team Collaboration</h3>
-                    <p className="text-muted-foreground">Connect your team with role-based access, real-time updates, and transparent communication</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
-                  <Zap className="h-6 w-6 text-secondary mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-semibold text-foreground text-lg">Built for Speed</h3>
-                    <p className="text-muted-foreground">Lightning-fast interface designed to keep your team moving without friction or delays</p>
-                  </div>
-                </div>
-              </div>
+        {/* Top Navigation */}
+        <nav className="relative z-10 flex justify-between items-center px-8 py-6">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+            QuickPace
+          </h2>
+          <div className="flex gap-3">
+            <Button 
+              variant="ghost"
+              onClick={() => setShowAuthForms(true)}
+              className="hover:bg-background/50"
+            >
+              Sign In
+            </Button>
+            <Button 
+              onClick={() => setShowAuthForms(true)}
+            >
+              Sign Up
+            </Button>
+          </div>
+        </nav>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button 
-                  size="lg" 
-                  className="text-lg px-8 py-6 group"
-                  onClick={() => setShowAuthForms(true)}
-                >
-                  Get Started Free
-                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  className="text-lg px-8 py-6"
-                  onClick={() => setShowAuthForms(true)}
-                >
-                  Sign In
-                </Button>
+        {/* Main Content - Left Aligned */}
+        <div className="relative z-10 px-8 py-12 max-w-2xl">
+          <div className="space-y-8">
+            <div className="space-y-6">
+              <div className="inline-block">
+                <span className="text-sm font-semibold tracking-wide uppercase text-primary bg-primary/10 px-4 py-2 rounded-full backdrop-blur-sm">
+                  Project Management Simplified
+                </span>
               </div>
+              <h1 className="text-6xl lg:text-7xl font-bold leading-tight">
+                <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                  QuickPace
+                </span>
+              </h1>
+              <p className="text-xl lg:text-2xl text-foreground leading-relaxed">
+                Transform the way your team collaborates. Streamline workflows, track progress in real-time, and deliver projects faster than ever before.
+              </p>
             </div>
 
-            {/* Right side - Hero Image */}
-            <div className="hidden lg:block">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50">
-                <img 
-                  src={heroImage} 
-                  alt="QuickPace Dashboard - Modern project management interface" 
-                  className="w-full h-auto object-cover"
-                />
+            <div className="space-y-5">
+              <div className="flex items-start gap-4 p-4 rounded-lg bg-background/40 backdrop-blur-sm border border-border/50">
+                <CheckCircle2 className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold text-foreground text-lg">Intuitive Task Management</h3>
+                  <p className="text-muted-foreground">Organize, prioritize, and track tasks with drag-and-drop simplicity across customizable boards</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4 p-4 rounded-lg bg-background/40 backdrop-blur-sm border border-border/50">
+                <Users className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold text-foreground text-lg">Seamless Team Collaboration</h3>
+                  <p className="text-muted-foreground">Connect your team with role-based access, real-time updates, and transparent communication</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4 p-4 rounded-lg bg-background/40 backdrop-blur-sm border border-border/50">
+                <Zap className="h-6 w-6 text-secondary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold text-foreground text-lg">Built for Speed</h3>
+                  <p className="text-muted-foreground">Lightning-fast interface designed to keep your team moving without friction or delays</p>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Bottom Get Started Button */}
+        <div className="absolute bottom-12 left-8 z-10">
+          <Button 
+            size="lg" 
+            className="text-lg px-8 py-6 group shadow-lg"
+            onClick={() => setShowAuthForms(true)}
+          >
+            Get Started Free
+            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+          </Button>
         </div>
       </div>
     );
