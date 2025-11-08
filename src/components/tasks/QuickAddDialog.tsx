@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { TaskPriority, TaskStatus } from "@/types/task";
 import { useTasks } from "@/hooks/useTasks";
 import { useProjects } from "@/hooks/useProjects";
@@ -94,12 +95,13 @@ export const QuickAddDialog = ({ open, onOpenChange, defaultProjectId }: QuickAd
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] p-0">
+        <DialogHeader className="px-6 pt-6">
           <DialogTitle>Create New Task</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <ScrollArea className="max-h-[calc(90vh-8rem)] px-6">
+          <form onSubmit={handleSubmit} className="space-y-4 pb-4">
           <div>
             <label className="text-sm font-medium mb-2 block">Task Title</label>
             <Input
@@ -209,15 +211,21 @@ export const QuickAddDialog = ({ open, onOpenChange, defaultProjectId }: QuickAd
             </div>
           </div>
 
-          <div className="flex gap-2 justify-end pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={!title.trim() || !projectId || createTask.isPending}>
-              {createTask.isPending ? "Creating..." : "Create Task"}
-            </Button>
-          </div>
-        </form>
+          </form>
+        </ScrollArea>
+        
+        <div className="flex gap-2 justify-end px-6 pb-6 border-t pt-4">
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button 
+            type="submit" 
+            disabled={!title.trim() || !projectId || createTask.isPending}
+            onClick={handleSubmit}
+          >
+            {createTask.isPending ? "Creating..." : "Create Task"}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
