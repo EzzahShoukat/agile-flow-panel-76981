@@ -131,9 +131,9 @@ export default function Auth() {
           <img 
             src={heroImage} 
             alt="QuickPace workspace background" 
-            className="w-full h-full object-cover opacity-20"
+            className="w-full h-full object-cover opacity-40"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 animate-gradient-shift"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 animate-gradient-shift"></div>
         </div>
 
         {/* Top Navigation */}
@@ -158,7 +158,7 @@ export default function Auth() {
         </nav>
 
         {/* Main Content - Left Aligned */}
-        <div className="relative z-10 px-8 py-12 max-w-2xl">
+        <div className="relative z-10 px-8 lg:px-16 py-12 max-w-3xl min-h-[calc(100vh-200px)] flex flex-col justify-between">
           <div className="space-y-8">
             <div className="space-y-6">
               <div className="inline-block">
@@ -166,52 +166,52 @@ export default function Auth() {
                   Project Management Simplified
                 </span>
               </div>
-              <h1 className="text-6xl lg:text-7xl font-bold leading-tight">
+              <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
                 <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
                   QuickPace
                 </span>
               </h1>
-              <p className="text-xl lg:text-2xl text-foreground leading-relaxed">
+              <p className="text-lg lg:text-xl text-foreground leading-relaxed max-w-xl">
                 Transform the way your team collaborates. Streamline workflows, track progress in real-time, and deliver projects faster than ever before.
               </p>
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-4 max-w-xl">
               <div className="flex items-start gap-4 p-4 rounded-lg bg-background/40 backdrop-blur-sm border border-border/50">
                 <CheckCircle2 className="h-6 w-6 text-accent mt-1 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-foreground text-lg">Intuitive Task Management</h3>
-                  <p className="text-muted-foreground">Organize, prioritize, and track tasks with drag-and-drop simplicity across customizable boards</p>
+                  <h3 className="font-semibold text-foreground text-base">Intuitive Task Management</h3>
+                  <p className="text-sm text-muted-foreground">Organize, prioritize, and track tasks with drag-and-drop simplicity</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 p-4 rounded-lg bg-background/40 backdrop-blur-sm border border-border/50">
                 <Users className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-foreground text-lg">Seamless Team Collaboration</h3>
-                  <p className="text-muted-foreground">Connect your team with role-based access, real-time updates, and transparent communication</p>
+                  <h3 className="font-semibold text-foreground text-base">Seamless Team Collaboration</h3>
+                  <p className="text-sm text-muted-foreground">Connect your team with role-based access and real-time updates</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 p-4 rounded-lg bg-background/40 backdrop-blur-sm border border-border/50">
                 <Zap className="h-6 w-6 text-secondary mt-1 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-foreground text-lg">Built for Speed</h3>
-                  <p className="text-muted-foreground">Lightning-fast interface designed to keep your team moving without friction or delays</p>
+                  <h3 className="font-semibold text-foreground text-base">Built for Speed</h3>
+                  <p className="text-sm text-muted-foreground">Lightning-fast interface designed to keep your team moving</p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Bottom Get Started Button */}
-        <div className="absolute bottom-12 left-8 z-10">
-          <Button 
-            size="lg" 
-            className="text-lg px-8 py-6 group shadow-lg"
-            onClick={() => setShowAuthForms(true)}
-          >
-            Get Started Free
-            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
+          {/* Bottom Get Started Button */}
+          <div className="mt-12">
+            <Button 
+              size="lg" 
+              className="text-lg px-8 py-6 group shadow-lg"
+              onClick={() => setShowAuthForms(true)}
+            >
+              Get Started Free
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </div>
         </div>
       </div>
     );

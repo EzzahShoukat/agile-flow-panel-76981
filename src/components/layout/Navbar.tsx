@@ -23,7 +23,7 @@ export const Navbar = () => {
     <header className="h-16 border-b border-border bg-card sticky top-0 z-40">
       <div className="h-full px-6 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <h1 className="text-xl font-bold text-foreground">TaskFlow</h1>
+          <h1 className="text-xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">QuickPace</h1>
           
           <Button
             variant="outline"

@@ -29,12 +29,14 @@ export const TaskCard = ({ task, onClick }: TaskCardProps) => {
           <h4 className="font-medium text-sm text-foreground group-hover:text-primary transition-colors line-clamp-2">
             {task.title}
           </h4>
-          <Badge
-            variant="outline"
-            className={cn("text-xs shrink-0", priorityStyles[task.priority])}
-          >
-            {task.priority}
-          </Badge>
+          {task.status !== "done" && (
+            <Badge
+              variant="outline"
+              className={cn("text-xs shrink-0", priorityStyles[task.priority])}
+            >
+              {task.priority}
+            </Badge>
+          )}
         </div>
 
         {task.description && (
