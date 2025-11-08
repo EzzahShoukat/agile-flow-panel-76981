@@ -5,11 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus } from "lucide-react";
+import { Plus, Calendar } from "lucide-react";
 import { useProjects } from "@/hooks/useProjects";
 import { useTeams } from "@/hooks/useTeams";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface CreateProjectDialogProps {
   open?: boolean;
@@ -25,6 +29,7 @@ export const CreateProjectDialog = ({ open: controlledOpen, onOpenChange }: Crea
   const [description, setDescription] = useState("");
   const [color, setColor] = useState("hsl(215, 85%, 55%)");
   const [teamId, setTeamId] = useState<string>("");
+  const [deadline, setDeadline] = useState<Date | undefined>(undefined);
   const { createProject } = useProjects();
   const { teams } = useTeams();
 
@@ -42,11 +47,13 @@ export const CreateProjectDialog = ({ open: controlledOpen, onOpenChange }: Crea
       color,
       team_id: teamId || null,
       created_by: userData.user.id,
+      deadline: deadline?.toISOString() || null,
     });
     setName("");
     setDescription("");
     setColor("hsl(215, 85%, 55%)");
     setTeamId("");
+    setDeadline(undefined);
     setOpen(false);
   };
 
@@ -127,6 +134,31 @@ export const CreateProjectDialog = ({ open: controlledOpen, onOpenChange }: Crea
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div>
+            <Label>Deadline (Optional)</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !deadline && "text-muted-foreground"
+                  )}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {deadline ? format(deadline, "PPP") : "Pick a deadline"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <CalendarComponent
+                  mode="single"
+                  selected={deadline}
+                  onSelect={setDeadline}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
           <Button type="submit" className="w-full">Create Project</Button>
         </form>

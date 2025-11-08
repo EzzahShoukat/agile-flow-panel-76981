@@ -1,13 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { TaskPriority, TaskStatus } from "@/types/task";
 import { useTasks } from "@/hooks/useTasks";
 import { useProjects } from "@/hooks/useProjects";
 import { useAuth } from "@/contexts/AuthContext";
+import { Calendar } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 interface QuickAddDialogProps {
   open: boolean;
@@ -21,10 +27,45 @@ export const QuickAddDialog = ({ open, onOpenChange, defaultProjectId }: QuickAd
   const [status, setStatus] = useState<TaskStatus>("todo");
   const [priority, setPriority] = useState<TaskPriority>("medium");
   const [projectId, setProjectId] = useState<string>(defaultProjectId || "");
+  const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
+  const [assigneeId, setAssigneeId] = useState<string>("");
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
   
   const { user } = useAuth();
   const { createTask } = useTasks();
   const { projects } = useProjects();
+
+  // Fetch team members when project changes
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      if (!projectId) {
+        setTeamMembers([]);
+        return;
+      }
+
+      const { data: project } = await supabase
+        .from("projects")
+        .select("team_id")
+        .eq("id", projectId)
+        .single();
+
+      if (project?.team_id) {
+        const { data: members } = await supabase
+          .from("team_members")
+          .select(`
+            user_id,
+            profiles:user_id (id, full_name, avatar_url)
+          `)
+          .eq("team_id", project.team_id);
+
+        setTeamMembers(members?.map((m: any) => m.profiles) || []);
+      } else {
+        setTeamMembers([]);
+      }
+    };
+
+    fetchTeamMembers();
+  }, [projectId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +78,8 @@ export const QuickAddDialog = ({ open, onOpenChange, defaultProjectId }: QuickAd
       priority,
       project_id: projectId,
       created_by: user.id,
-      assignee_id: user.id,
+      assignee_id: assigneeId || null,
+      due_date: dueDate?.toISOString() || null,
     });
 
     setTitle("");
@@ -45,6 +87,8 @@ export const QuickAddDialog = ({ open, onOpenChange, defaultProjectId }: QuickAd
     setStatus("todo");
     setPriority("medium");
     setProjectId("");
+    setDueDate(undefined);
+    setAssigneeId("");
     onOpenChange(false);
   };
 
@@ -90,6 +134,48 @@ export const QuickAddDialog = ({ open, onOpenChange, defaultProjectId }: QuickAd
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">Assign To (Optional)</label>
+            <Select value={assigneeId} onValueChange={setAssigneeId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select team member" />
+              </SelectTrigger>
+              <SelectContent>
+                {teamMembers.map((member) => (
+                  <SelectItem key={member.id} value={member.id}>
+                    {member.full_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">Due Date (Optional)</label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !dueDate && "text-muted-foreground"
+                  )}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {dueDate ? format(dueDate, "PPP") : "Pick a due date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <CalendarComponent
+                  mode="single"
+                  selected={dueDate}
+                  onSelect={setDueDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
