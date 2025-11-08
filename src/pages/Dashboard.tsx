@@ -1,11 +1,13 @@
 import { ProjectCard } from "@/components/dashboard/ProjectCard";
 import { useProjects } from "@/hooks/useProjects";
 import { useNavigate } from "react-router-dom";
-import { BarChart3, TrendingUp, FolderKanban, Users } from "lucide-react";
+import { BarChart3, TrendingUp, FolderKanban, Users, Clock, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
+import { Progress } from "@/components/ui/progress";
+import { isPast } from "date-fns";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -50,7 +52,7 @@ export const Dashboard = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [queryClient]);
 
   if (projectsLoading || tasksLoading) {
     return (
@@ -63,7 +65,11 @@ export const Dashboard = () => {
   const totalTasks = recentTasks.length;
   const completedTasks = recentTasks.filter((task) => task.status === "done").length;
   const inProgressTasks = recentTasks.filter((task) => task.status === "in_progress").length;
+  const todoTasks = recentTasks.filter((task) => task.status === "todo").length;
+  const reviewTasks = recentTasks.filter((task) => task.status === "review").length;
+  const overdueTasks = recentTasks.filter((task) => task.due_date && isPast(new Date(task.due_date)) && task.status !== "done").length;
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  const highPriorityTasks = recentTasks.filter((task) => task.priority === "high" && task.status !== "done").length;
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
@@ -75,44 +81,111 @@ export const Dashboard = () => {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">Total Tasks</h3>
-            <div className="p-2 bg-primary/10 rounded-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6 hover:shadow-lg transition-all hover:scale-105">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Total Tasks</h3>
+            <div className="p-2.5 bg-primary/15 rounded-lg">
               <BarChart3 className="h-5 w-5 text-primary" />
             </div>
           </div>
-          <p className="text-4xl font-bold text-foreground">{totalTasks}</p>
-          <p className="text-sm text-muted-foreground mt-2">
-            {inProgressTasks} in progress
-          </p>
+          <p className="text-4xl font-bold text-foreground mb-2">{totalTasks}</p>
+          <div className="flex items-center gap-2 text-sm">
+            <Clock className="h-4 w-4 text-primary" />
+            <span className="text-muted-foreground">{inProgressTasks} in progress</span>
+          </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-xl p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">Completed</h3>
-            <div className="p-2 bg-green-500/10 rounded-lg">
-              <TrendingUp className="h-5 w-5 text-green-600" />
+        <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-xl p-6 hover:shadow-lg transition-all hover:scale-105">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Completed</h3>
+            <div className="p-2.5 bg-green-500/15 rounded-lg">
+              <CheckCircle2 className="h-5 w-5 text-green-600" />
             </div>
           </div>
-          <p className="text-4xl font-bold text-foreground">{completedTasks}</p>
-          <p className="text-sm text-muted-foreground mt-2">
-            {completionRate}% completion rate
-          </p>
+          <p className="text-4xl font-bold text-foreground mb-2">{completedTasks}</p>
+          <div className="space-y-1">
+            <Progress value={completionRate} className="h-2" />
+            <p className="text-sm text-muted-foreground">{completionRate}% completion rate</p>
+          </div>
         </div>
 
-        <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 rounded-xl p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">Active Projects</h3>
-            <div className="p-2 bg-blue-500/10 rounded-lg">
-              <BarChart3 className="h-5 w-5 text-blue-600" />
+        <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 rounded-xl p-6 hover:shadow-lg transition-all hover:scale-105">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Active Projects</h3>
+            <div className="p-2.5 bg-blue-500/15 rounded-lg">
+              <FolderKanban className="h-5 w-5 text-blue-600" />
             </div>
           </div>
-          <p className="text-4xl font-bold text-foreground">{projects.length}</p>
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="text-4xl font-bold text-foreground mb-2">{projects.length}</p>
+          <p className="text-sm text-muted-foreground flex items-center gap-2">
+            <span className="inline-block w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
             All projects active
           </p>
+        </div>
+
+        <div className="bg-gradient-to-br from-orange-500/10 to-orange-500/5 border border-orange-500/20 rounded-xl p-6 hover:shadow-lg transition-all hover:scale-105">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">High Priority</h3>
+            <div className="p-2.5 bg-orange-500/15 rounded-lg">
+              <AlertCircle className="h-5 w-5 text-orange-600" />
+            </div>
+          </div>
+          <p className="text-4xl font-bold text-foreground mb-2">{highPriorityTasks}</p>
+          <p className="text-sm text-muted-foreground">
+            {overdueTasks} overdue tasks
+          </p>
+        </div>
+      </div>
+
+      {/* Task Status Breakdown */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-gradient-to-br from-status-todo-bg to-status-todo-bg/50 border border-status-todo/30 rounded-lg p-4 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">To Do</p>
+              <p className="text-2xl font-bold text-foreground mt-1">{todoTasks}</p>
+            </div>
+            <div className="h-12 w-12 rounded-full bg-status-todo/20 flex items-center justify-center">
+              <div className="h-3 w-3 rounded-full bg-status-todo"></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-status-in-progress-bg to-status-in-progress-bg/50 border border-status-in-progress/30 rounded-lg p-4 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">In Progress</p>
+              <p className="text-2xl font-bold text-foreground mt-1">{inProgressTasks}</p>
+            </div>
+            <div className="h-12 w-12 rounded-full bg-status-in-progress/20 flex items-center justify-center">
+              <div className="h-3 w-3 rounded-full bg-status-in-progress animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-status-review-bg to-status-review-bg/50 border border-status-review/30 rounded-lg p-4 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Review</p>
+              <p className="text-2xl font-bold text-foreground mt-1">{reviewTasks}</p>
+            </div>
+            <div className="h-12 w-12 rounded-full bg-status-review/20 flex items-center justify-center">
+              <div className="h-3 w-3 rounded-full bg-status-review"></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-status-done-bg to-status-done-bg/50 border border-status-done/30 rounded-lg p-4 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Done</p>
+              <p className="text-2xl font-bold text-foreground mt-1">{completedTasks}</p>
+            </div>
+            <div className="h-12 w-12 rounded-full bg-status-done/20 flex items-center justify-center">
+              <CheckCircle2 className="h-5 w-5 text-status-done" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
