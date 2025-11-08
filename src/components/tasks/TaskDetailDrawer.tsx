@@ -1,10 +1,22 @@
-import { Task, TaskStatus, TaskPriority } from "@/hooks/useTasks";
-import { X, Calendar, Flag, User } from "lucide-react";
+import { Task, TaskStatus, TaskPriority, useTasks } from "@/hooks/useTasks";
+import { X, Calendar, Flag, User, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
 
 interface TaskDetailDrawerProps {
   task: Task | null;
@@ -26,6 +38,32 @@ const priorityConfig = {
 };
 
 export const TaskDetailDrawer = ({ task, open, onOpenChange }: TaskDetailDrawerProps) => {
+  const { userRole } = useAuth();
+  const { deleteTask, updateTask } = useTasks();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const canDelete = userRole === "admin" || userRole === "manager";
+
+  const handleDelete = () => {
+    if (task) {
+      deleteTask.mutate(task.id);
+      onOpenChange(false);
+      setShowDeleteDialog(false);
+    }
+  };
+
+  const handleStatusChange = (status: TaskStatus) => {
+    if (task) {
+      updateTask.mutate({ id: task.id, status });
+    }
+  };
+
+  const handlePriorityChange = (priority: TaskPriority) => {
+    if (task) {
+      updateTask.mutate({ id: task.id, priority });
+    }
+  };
+
   if (!task || !open) return null;
 
   return (
@@ -39,9 +77,21 @@ export const TaskDetailDrawer = ({ task, open, onOpenChange }: TaskDetailDrawerP
           {/* Header */}
           <div className="flex items-start justify-between">
             <h2 className="text-2xl font-bold text-foreground pr-8">{task.title}</h2>
-            <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
-              <X className="h-5 w-5" />
-            </Button>
+            <div className="flex gap-2">
+              {canDelete && (
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </Button>
+              )}
+              <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
 
           {/* Status and Priority */}
@@ -50,7 +100,7 @@ export const TaskDetailDrawer = ({ task, open, onOpenChange }: TaskDetailDrawerP
               <label className="text-xs font-medium text-muted-foreground mb-2 block">
                 Status
               </label>
-              <Select defaultValue={task.status}>
+              <Select defaultValue={task.status} onValueChange={handleStatusChange}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -71,7 +121,7 @@ export const TaskDetailDrawer = ({ task, open, onOpenChange }: TaskDetailDrawerP
               <label className="text-xs font-medium text-muted-foreground mb-2 block">
                 Priority
               </label>
-              <Select defaultValue={task.priority}>
+              <Select defaultValue={task.priority} onValueChange={handlePriorityChange}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -133,6 +183,23 @@ export const TaskDetailDrawer = ({ task, open, onOpenChange }: TaskDetailDrawerP
           </div>
         </div>
       </div>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Task</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{task.title}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

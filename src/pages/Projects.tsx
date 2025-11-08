@@ -66,7 +66,11 @@ export const Projects = () => {
 
           {projects.length === 0 && (
             <Card className="p-12 text-center">
-              <p className="text-muted-foreground">No projects yet. Create your first project to get started!</p>
+              <p className="text-muted-foreground">
+                {canCreateProject 
+                  ? "No projects yet. Create your first project to get started!" 
+                  : "No projects available yet."}
+              </p>
             </Card>
           )}
 
@@ -80,9 +84,5 @@ export const Projects = () => {
 const ProjectCardWithStats = ({ project, onClick }: { project: any; onClick: () => void }) => {
   const stats = useProjectStats(project.id);
   
-  return (
-    <div onClick={onClick} className="cursor-pointer">
-      <ProjectCard project={project} stats={stats} />
-    </div>
-  );
+  return <ProjectCard project={project} stats={stats} onCardClick={onClick} />;
 };

@@ -1,24 +1,47 @@
 import { useState } from "react";
-import { Plus, Users as UsersIcon, ArrowLeft, UserPlus } from "lucide-react";
+import { Plus, Users as UsersIcon, ArrowLeft, UserPlus, Trash2, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CreateTeamDialog } from "@/components/dashboard/CreateTeamDialog";
-import { useTeams } from "@/hooks/useTeams";
+import { useTeams, useTeamMembers } from "@/hooks/useTeams";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { ManageTeamMembersDialog } from "@/components/teams/ManageTeamMembersDialog";
-import { useTeamMembers } from "@/hooks/useTeams";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const Teams = () => {
   const navigate = useNavigate();
-  const { teams, isLoading } = useTeams();
+  const { teams, isLoading, deleteTeam } = useTeams();
   const { userRole } = useAuth();
   const [createTeamOpen, setCreateTeamOpen] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
+  const [teamToDelete, setTeamToDelete] = useState<string | null>(null);
 
-  const canCreateTeam = userRole === "admin" || userRole === "manager";
+  const canManageTeams = userRole === "admin" || userRole === "manager";
+
+  const handleDeleteTeam = () => {
+    if (teamToDelete) {
+      deleteTeam.mutate(teamToDelete);
+      setTeamToDelete(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -46,9 +69,9 @@ export const Teams = () => {
             </Button>
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-foreground">Teams</h1>
-              <p className="text-muted-foreground mt-1">{canCreateTeam ? "Manage your teams and members" : "View your teams"}</p>
+              <p className="text-muted-foreground mt-1">{canManageTeams ? "Manage your teams and members" : "View your teams"}</p>
             </div>
-            {canCreateTeam && (
+            {canManageTeams && (
               <Button onClick={() => setCreateTeamOpen(true)} className="gap-2">
                 <Plus className="h-4 w-4" />
                 Create Team
@@ -60,17 +83,37 @@ export const Teams = () => {
             {teams.map((team) => (
               <Card key={team.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <UsersIcon className="h-5 w-5 text-primary" />
-                    {team.name}
-                  </CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <UsersIcon className="h-5 w-5 text-primary" />
+                      {team.name}
+                    </CardTitle>
+                    {canManageTeams && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem 
+                            onClick={() => setTeamToDelete(team.id)}
+                            className="text-destructive focus:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete Team
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </div>
                   {team.description && (
                     <CardDescription>{team.description}</CardDescription>
                   )}
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <TeamMembersPreview teamId={team.id} />
-                  {canCreateTeam && (
+                  {canManageTeams && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -88,7 +131,11 @@ export const Teams = () => {
 
           {teams.length === 0 && (
             <Card className="p-12 text-center">
-              <p className="text-muted-foreground">No teams yet. Create your first team to get started!</p>
+              <p className="text-muted-foreground">
+                {canManageTeams 
+                  ? "No teams yet. Create your first team to get started!" 
+                  : "No teams available yet."}
+              </p>
             </Card>
           )}
 
@@ -101,6 +148,23 @@ export const Teams = () => {
               onOpenChange={(open) => !open && setSelectedTeamId(null)}
             />
           )}
+
+          <AlertDialog open={!!teamToDelete} onOpenChange={(open) => !open && setTeamToDelete(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Team</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete this team? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteTeam} className="bg-destructive hover:bg-destructive/90">
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
