@@ -95,13 +95,13 @@ export const QuickAddDialog = ({ open, onOpenChange, defaultProjectId }: QuickAd
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] p-0">
-        <DialogHeader className="px-6 pt-6">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] p-0 flex flex-col">
+        <DialogHeader className="px-6 pt-6 shrink-0">
           <DialogTitle>Create New Task</DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="max-h-[calc(90vh-8rem)] px-6">
-          <form onSubmit={handleSubmit} className="space-y-4 pb-4">
+        <ScrollArea className="flex-1 px-6">
+          <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div>
             <label className="text-sm font-medium mb-2 block">Task Title</label>
             <Input
@@ -214,7 +214,7 @@ export const QuickAddDialog = ({ open, onOpenChange, defaultProjectId }: QuickAd
           </form>
         </ScrollArea>
         
-        <div className="flex gap-2 justify-end px-6 pb-6 border-t pt-4">
+        <div className="flex gap-2 justify-end px-6 pb-6 border-t pt-4 shrink-0">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>

@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, Circle, Clock, AlertCircle, Trash2, MoreVertical } from "lucide-react";
+import { CheckCircle2, Circle, Clock, AlertCircle, Trash2, MoreVertical, Calendar as CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 import { Project, useProjects } from "@/hooks/useProjects";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -86,6 +87,12 @@ export const ProjectCard = ({ project, stats = { todo: 0, inProgress: 0, review:
             </div>
           </div>
           <p className="text-sm text-muted-foreground">{project.description}</p>
+          {project.deadline && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
+              <CalendarIcon className="h-4 w-4" />
+              <span>Due: {format(new Date(project.deadline), "MMM dd, yyyy")}</span>
+            </div>
+          )}
         </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">

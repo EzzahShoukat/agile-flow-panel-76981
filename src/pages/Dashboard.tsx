@@ -155,27 +155,32 @@ export const Dashboard = () => {
         <p className="text-muted-foreground text-lg">Comprehensive insights into your projects and team performance</p>
       </div>
 
-      {/* Task Progress Analytics */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-foreground">📊 Task Progress Analytics</h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Project Completion % */}
-          <Card className="p-6">
+          <Card className="p-6 border-border/40 shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Project Completion %</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={projectCompletionData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="name" style={{ fontSize: '12px' }} />
-                <YAxis style={{ fontSize: '12px' }} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                <XAxis dataKey="name" style={{ fontSize: '12px' }} stroke="hsl(var(--muted-foreground))" />
+                <YAxis style={{ fontSize: '12px' }} stroke="hsl(var(--muted-foreground))" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))', 
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                  }} 
+                />
                 <Bar dataKey="completion" fill={COLORS.primary} radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </Card>
 
           {/* Tasks Completed vs Pending */}
-          <Card className="p-6">
+          <Card className="p-6 border-border/40 shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Tasks Completed vs Pending</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -191,35 +196,56 @@ export const Dashboard = () => {
                   <Cell fill={COLORS.done} />
                   <Cell fill={COLORS.inProgress} />
                 </Pie>
-                <Tooltip />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))', 
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                  }} 
+                />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
           </Card>
 
           {/* Overdue Tasks Trend */}
-          <Card className="p-6">
+          <Card className="p-6 border-border/40 shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Overdue Tasks Trend (Last 7 Days)</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={overdueTrendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="date" style={{ fontSize: '12px' }} />
-                <YAxis style={{ fontSize: '12px' }} />
-                <Tooltip />
-                <Line type="monotone" dataKey="overdue" stroke={COLORS.destructive} strokeWidth={2} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                <XAxis dataKey="date" style={{ fontSize: '12px' }} stroke="hsl(var(--muted-foreground))" />
+                <YAxis style={{ fontSize: '12px' }} stroke="hsl(var(--muted-foreground))" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))', 
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                  }} 
+                />
+                <Line type="monotone" dataKey="overdue" stroke={COLORS.destructive} strokeWidth={3} dot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
           </Card>
 
           {/* Task Aging Analysis */}
-          <Card className="p-6">
+          <Card className="p-6 border-border/40 shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Task Aging Analysis (Avg Days)</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={agingData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis type="number" style={{ fontSize: '12px' }} />
-                <YAxis dataKey="status" type="category" style={{ fontSize: '12px' }} width={100} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                <XAxis type="number" style={{ fontSize: '12px' }} stroke="hsl(var(--muted-foreground))" />
+                <YAxis dataKey="status" type="category" style={{ fontSize: '12px' }} width={100} stroke="hsl(var(--muted-foreground))" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))', 
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                  }} 
+                />
                 <Bar dataKey="avg" fill={COLORS.chart2} radius={[0, 8, 8, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -227,54 +253,55 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {/* Team Performance Metrics */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-foreground">👥 Team Performance Metrics</h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Tasks Completed per Member */}
-          <Card className="p-6">
+          <Card className="p-6 border-border/40 shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Tasks Completed per Member</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={memberCompletionData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis type="number" style={{ fontSize: '12px' }} />
-                <YAxis dataKey="name" type="category" style={{ fontSize: '12px' }} width={100} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                <XAxis type="number" style={{ fontSize: '12px' }} stroke="hsl(var(--muted-foreground))" />
+                <YAxis dataKey="name" type="category" style={{ fontSize: '12px' }} width={100} stroke="hsl(var(--muted-foreground))" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))', 
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                  }} 
+                />
                 <Bar dataKey="completed" fill={COLORS.done} radius={[0, 8, 8, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </Card>
 
-          {/* Average Task Completion Time */}
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Average Task Completion Time</h3>
-            <div className="flex items-center justify-center h-[300px]">
-              <div className="text-center">
-                <div className="text-6xl font-bold text-primary mb-4">{avgCompletionTime}</div>
-                <div className="text-xl text-muted-foreground">Days on average</div>
-              </div>
-            </div>
-          </Card>
-
           {/* Task Assignment Load */}
-          <Card className="p-6">
+          <Card className="p-6 border-border/40 shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Task Assignment Load</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={assignmentLoadData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="name" style={{ fontSize: '10px' }} angle={-45} textAnchor="end" height={80} />
-                <YAxis style={{ fontSize: '12px' }} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                <XAxis dataKey="name" style={{ fontSize: '10px' }} angle={-45} textAnchor="end" height={80} stroke="hsl(var(--muted-foreground))" />
+                <YAxis style={{ fontSize: '12px' }} stroke="hsl(var(--muted-foreground))" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))', 
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                  }} 
+                />
                 <Legend />
-                <Bar dataKey="inProgress" fill={COLORS.inProgress} stackId="a" name="In Progress" />
+                <Bar dataKey="inProgress" fill={COLORS.inProgress} stackId="a" name="In Progress" radius={[8, 8, 0, 0]} />
                 <Bar dataKey="completed" fill={COLORS.done} stackId="a" name="Completed" />
               </BarChart>
             </ResponsiveContainer>
           </Card>
 
           {/* Active vs Idle Members */}
-          <Card className="p-6">
+          <Card className="p-6 border-border/40 shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Active vs Idle Members</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -290,7 +317,14 @@ export const Dashboard = () => {
                   <Cell fill={COLORS.primary} />
                   <Cell fill={COLORS.muted} />
                 </Pie>
-                <Tooltip />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))', 
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                  }} 
+                />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>

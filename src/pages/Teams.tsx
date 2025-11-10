@@ -203,22 +203,20 @@ const TeamMembersPreview = ({ teamId, canManageTeams }: { teamId: string; canMan
             )}
           </div>
           
-          {/* Show all member names for non-managers/admins */}
-          {!canManageTeams && (
-            <div className="pt-2 space-y-1">
-              {members.map((member) => (
-                <div key={member.id} className="flex items-center gap-2 text-sm">
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src={member.profiles?.avatar_url || undefined} />
-                    <AvatarFallback className="text-xs">
-                      {member.profiles?.full_name?.charAt(0) || "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-foreground">{member.profiles?.full_name || "Unknown"}</span>
-                </div>
-              ))}
-            </div>
-          )}
+          {/* Show all member names */}
+          <div className="pt-2 space-y-1">
+            {members.map((member) => (
+              <div key={member.id} className="flex items-center gap-2 text-sm">
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={member.profiles?.avatar_url || undefined} />
+                  <AvatarFallback className="text-xs">
+                    {member.profiles?.full_name?.charAt(0) || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-foreground">{member.profiles?.full_name || "Unknown"}</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
       
